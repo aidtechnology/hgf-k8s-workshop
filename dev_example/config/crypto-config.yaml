@@ -16,7 +16,7 @@ OrdererOrgs:
     # "Specs" - See PeerOrgs below for complete description
     # ---------------------------------------------------------------------------
     Specs:
-      - Hostname: ord0-hlf-ord
+      - Hostname: ord1-hlf-ord
 # ---------------------------------------------------------------------------
 # "PeerOrgs" - Definition of organizcd -----------------------------------------
 PeerOrgs:
@@ -59,9 +59,9 @@ PeerOrgs:
     # name collisions
     # ---------------------------------------------------------------------------
     Template:
-      Count: 1
+      # Count: 1
       # Start: 5
-      Hostname: "{{.Prefix}}{{.Index}}-hlf-peer" # default
+      Hostname: "peer1-hlf-peer"
     # ---------------------------------------------------------------------------
     # "Users"
     # ---------------------------------------------------------------------------
