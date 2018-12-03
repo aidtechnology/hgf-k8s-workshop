@@ -54,21 +54,25 @@ If you don't have the following namespaces, you may need to create.
 
 We must save the relevant Orderer admin crypto-config files as secrets.
 
-    ORG_CERT=$(ls ./crypto-config/ordererOrganizations/orderers.svc.cluster.local/users/Admin@orderers.svc.cluster.local/msp/admincerts/*.pem)
+    MSP_DIR=./crypto-config/ordererOrganizations/orderers.svc.cluster.local/users/Admin@orderers.svc.cluster.local/msp
+
+    ORG_CERT=$(ls ${MSP_DIR}/admincerts/*.pem)
     kubectl create secret generic -n orderers hlf--ord-admincert --from-file=cert.pem=$ORG_CERT
 
-    CA_CERT=$(ls ./crypto-config/ordererOrganizations/orderers.svc.cluster.local/users/Admin@orderers.svc.cluster.local/msp/cacerts/*.pem)
+    CA_CERT=$(ls ${MSP_DIR}/cacerts/*.pem)
     kubectl create secret generic -n orderers hlf--ord-cacert --from-file=cacert.pem=$CA_CERT
 
 And the Peer admin crypto-config files:
 
-    ORG_CERT=$(ls ./crypto-config/peerOrganizations/peers.svc.cluster.local/users/Admin@peers.svc.cluster.local/msp/admincerts/*.pem)
+    MSP_DIR=./crypto-config/peerOrganizations/peers.svc.cluster.local/users/Admin@peers.svc.cluster.local/msp
+
+    ORG_CERT=$(ls ${MSP_DIR}/admincerts/*.pem)
     kubectl create secret generic -n peers hlf--peer-admincert --from-file=cert.pem=$ORG_CERT
 
-    ORG_KEY=$(ls ./crypto-config/peerOrganizations/peers.svc.cluster.local/users/Admin@peers.svc.cluster.local/msp/keystore/*_sk)
+    ORG_KEY=$(ls ${MSP_DIR}/keystore/*_sk)
     kubectl create secret generic -n peers hlf--peer-adminkey --from-file=key.pem=$ORG_KEY
 
-    CA_CERT=$(ls ./crypto-config/peerOrganizations/peers.svc.cluster.local/users/Admin@peers.svc.cluster.local/msp/cacerts/*.pem)
+    CA_CERT=$(ls ${MSP_DIR}/cacerts/*.pem)
     kubectl create secret generic -n peers hlf--peer-cacert --from-file=cacert.pem=$CA_CERT
 
 #### Genesis & Channel
@@ -87,15 +91,17 @@ And the Peer admin crypto-config files:
 
 Save node identity cryptographic material as secrets:
 
-    NODE_CERT=$(ls ./crypto-config/ordererOrganizations/orderers.svc.cluster.local/orderers/ord1-hlf-ord.orderers.svc.cluster.local/msp/signcerts/*.pem)
+    MSP_DIR=./crypto-config/ordererOrganizations/orderers.svc.cluster.local/orderers/ord1-hlf-ord.orderers.svc.cluster.local/msp
+
+    NODE_CERT=$(ls ${MSP_DIR}/signcerts/*.pem)
     kubectl create secret generic -n orderers hlf--ord1-idcert --from-file=cert.pem=$NODE_CERT
 
-    NODE_KEY=$(ls ./crypto-config/ordererOrganizations/orderers.svc.cluster.local/orderers/ord1-hlf-ord.orderers.svc.cluster.local/msp/keystore/*_sk)
+    NODE_KEY=$(ls ${MSP_DIR}/keystore/*_sk)
     kubectl create secret generic -n orderers hlf--ord1-idkey --from-file=key.pem=$NODE_KEY
 
 #### Helm chart
 
-And install the HLF CouchDB Helm chart:
+And install the HLF Orderer Helm chart:
 
     helm install stable/hlf-ord -n ord1 --namespace orderers -f ../values/hlf-ord/ord1.yaml
 
@@ -123,10 +129,12 @@ And check that it is running:
 
 Save node identity cryptographic material as secrets:
 
-    NODE_CERT=$(ls ./crypto-config/peerOrganizations/peers.svc.cluster.local/peers/peer1-hlf-peer.peers.svc.cluster.local/msp/signcerts/*.pem)
+    MSP_DIR=./crypto-config/peerOrganizations/peers.svc.cluster.local/peers/peer1-hlf-peer.peers.svc.cluster.local/msp
+
+    NODE_CERT=$(ls ${MSP_DIR}/signcerts/*.pem)
     kubectl create secret generic -n peers hlf--peer1-idcert --from-file=cert.pem=$NODE_CERT
 
-    NODE_KEY=$(ls ./crypto-config/peerOrganizations/peers.svc.cluster.local/peers/peer1-hlf-peer.peers.svc.cluster.local/msp/keystore/*_sk)
+    NODE_KEY=$(ls ${MSP_DIR}/keystore/*_sk)
     kubectl create secret generic -n peers hlf--peer1-idkey --from-file=key.pem=$NODE_KEY
 
 #### Helm chart
@@ -161,18 +169,12 @@ You should see that now the peer is linked to this channel.
 
 We start by deleting the actual Helm deployments:
 
-```
-helm delete --purge ord1 peer1 cdb-peer1
-```
+    helm delete --purge ord1 peer1 cdb-peer1
 
 Then we delete the crypto-material we saved for the orderers:
 
-```
-kubectl -n orderers delete secret hlf--genesis hlf--ord-admincert hlf--ord-cacert hlf--ord1-idcert hlf--ord1-idkey
-```
+    kubectl -n orderers delete secret hlf--genesis hlf--ord-admincert hlf--ord-cacert hlf--ord1-idcert hlf--ord1-idkey
 
 And that of the peers:
 
-```
-kubectl -n peers delete secret hlf--channel hlf--peer-admincert hlf--peer-adminkey hlf--peer-cacert hlf--peer1-idcert hlf--peer1-idkey
-```
+    kubectl -n peers delete secret hlf--channel hlf--peer-admincert hlf--peer-adminkey hlf--peer-cacert hlf--peer1-idcert hlf--peer1-idkey

@@ -14,10 +14,10 @@ secrets:
   peer:
     cert: hlf--peer2-idcert
     key: hlf--peer2-idkey
-    caCert: hlf--ca-cert
+    caCert: hlf--peer-ca-cert
   channel: hlf--channel
-  adminCert: hlf--org-admincert
-  adminKey: hlf--org-adminkey
+  adminCert: hlf--peer-admincert
+  adminKey: hlf--peer-adminkey
   caServerTls: ca--tls
 
 affinity:

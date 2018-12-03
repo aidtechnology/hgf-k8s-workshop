@@ -14,10 +14,9 @@ secrets:
   ord:
     cert: hlf--ord2-idcert
     key: hlf--ord2-idkey
-    caCert: hlf--ca-cert
+    caCert: hlf--ord-ca-cert
   genesis: hlf--genesis
-  adminCert: hlf--org-admincert
-  caServerTls: ca--tls
+  adminCert: hlf--ord-admincert
 
 affinity:
   podAntiAffinity:

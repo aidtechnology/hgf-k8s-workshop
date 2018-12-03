@@ -13,14 +13,30 @@
 ################################################################################
 Organizations:
 
+    # SampleOrg defines an MSP using the sampleconfig.  It should never be used
+    # in production but may be used as a template for other definitions
+    - &OrdererOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: OrdererOrg
+
+        # ID to load the MSP definition as
+        ID: OrdererMSP
+
+        # MSPDir is the filesystem path which contains the MSP configuration
+        MSPDir: ./OrdererMSP
+
+        # turn off security for the channel
+        AdminPrincipal: Role.MEMBER
+
     # Organization controlling both peers and Orderers
     - &AidTech
         Name: AidTech
 
         # ID to load the MSP definition as
-        ID: AidTechMSP
+        ID: PeerMSP
 
-        MSPDir: ./AidTechMSP
+        MSPDir: ./PeerMSP
 
         # turn off security for the peer
         AdminPrincipal: Role.MEMBER
@@ -29,9 +45,7 @@ Organizations:
             # AnchorPeers defines the location of peers that can be used
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
-            - Host: peer1-hlf-peer.blockchain.svc.cluster.local
-              Port: 7051
-            - Host: peer2-hlf-peer.blockchain.svc.cluster.local
+            - Host: peer0-hlf-peer.peers.svc.cluster.local
               Port: 7051
 
 ################################################################################
@@ -49,8 +63,8 @@ Orderer: &OrdererDefaults
     OrdererType: kafka
 
     Addresses:
-        - ord1-hlf-ord.blockchain.svc.cluster.local:7050
-        - ord2-hlf-ord.blockchain.svc.cluster.local:7050
+        - ord1-hlf-ord.orderers.svc.cluster.local:7050
+        - ord2-hlf-ord.orderers.svc.cluster.local:7050
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s
@@ -109,7 +123,7 @@ Profiles:
         Orderer:
             <<: *OrdererDefaults
             Organizations:
-                - *AidTech
+                - *OrdererOrg
         Consortiums:
             MyConsortium:
                 Organizations:
