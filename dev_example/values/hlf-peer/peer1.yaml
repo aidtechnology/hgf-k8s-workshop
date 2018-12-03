@@ -7,13 +7,13 @@ persistence:
 
 peer:
   databaseType: CouchDB
-  couchdbInstance: cdb-peer0
+  couchdbInstance: cdb-peer1
   mspID: PeerMSP
 
 secrets:
   peer:
-    cert: hlf--peer0-idcert
-    key: hlf--peer0-idkey
+    cert: hlf--peer1-idcert
+    key: hlf--peer1-idkey
     caCert: hlf--peer-cacert
   channel: hlf--channel
   adminCert: hlf--peer-admincert
