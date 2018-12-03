@@ -1,0 +1,30 @@
+image:
+  tag: 1.2.0
+
+persistence:
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+ord:
+  type: kafka
+  ## MSP ID of the Orderer
+  mspID: AidTechMSP
+
+secrets:
+  ord:
+    cert: hlf--ord1-idcert
+    key: hlf--ord1-idkey
+    caCert: hlf--ca-cert
+  genesis: hlf--genesis
+  adminCert: hlf--org-admincert
+  caServerTls: ca--tls
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 95
+        podAffinityTerm:
+          topologyKey: "kubernetes.io/hostname"
+          labelSelector:
+            matchLabels:
+              app: hlf-ord
