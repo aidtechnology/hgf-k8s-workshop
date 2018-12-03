@@ -4,4 +4,4 @@
 *MSP
 mychannel.tx
 genesis.block
-crypto-config/*
+crypto-config
