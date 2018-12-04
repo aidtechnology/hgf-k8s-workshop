@@ -52,7 +52,7 @@ Then we need to add the Staging and Production cluster issuers
 
 #### Domain Name
 
-Currently, the `helm_values` files for the CA reference the following CA Domain Name: `ca.hgf.aidtech-test.xyz` in  `/helm_values/ca_values.yaml`
+Currently, the `helm_values` files for the CA reference the following CA Domain Name: `ca.hgf.aidtech-test.xyz` in  `/helm_values/ca.yaml`
 
 Since you won't have access to this, you should set this domain name to one you've obtained/purchased, and which is pointing to the `nginx-ingress` IP address.
 
@@ -66,7 +66,7 @@ Alternatively, you may not use the Ingress at all and disable it, and instead us
 
 Install the Fabric CA chart (it automatically creates a postgresql database)
 
-    helm install stable/hlf-ca -n ca --namespace cas -f ./helm_values/ca_values.yaml
+    helm install stable/hlf-ca -n ca --namespace cas -f ./helm_values/ca.yaml
 
 Get pod for CA release
 
@@ -207,7 +207,7 @@ Get back to where we were before...
 
 Install Kafka chart (use special values to ensure 4 Kafka brokers and that Kafka messages don't disappear)
 
-    helm install incubator/kafka -n kafka-hlf --namespace orderers -f ./helm_values/kafka-hlf_values.yaml
+    helm install incubator/kafka -n kafka-hlf --namespace orderers -f ./helm_values/kafka-hlf.yaml
 
 ### Fabric Orderer
 
@@ -239,7 +239,7 @@ Save the Orderer private key in another secret
 
 Install orderers
 
-    helm install stable/hlf-ord -n ord${NUM} --namespace orderers -f ./helm_values/ord${NUM}_values.yaml
+    helm install stable/hlf-ord -n ord${NUM} --namespace orderers -f ./helm_values/ord${NUM}.yaml
 
 Get logs from orderer to check it's actually started
 
@@ -259,7 +259,7 @@ For each peer set the `NUM` environmental variable and follow the below instruct
 
 Install CouchDB chart
 
-    helm install stable/hlf-couchdb -n cdb-peer${NUM} --namespace peers -f ./helm_values/cdb-peer${NUM}_values.yaml
+    helm install stable/hlf-couchdb -n cdb-peer${NUM} --namespace peers -f ./helm_values/cdb-peer${NUM}.yaml
 
 Check that CouchDB is running
 
@@ -291,7 +291,7 @@ Save the Orderer private key in another secret
 
 Install Peer
 
-    helm install stable/hlf-peer -n peer${NUM} --namespace peers -f ./helm_values/peer${NUM}_values.yaml
+    helm install stable/hlf-peer -n peer${NUM} --namespace peers -f ./helm_values/peer${NUM}.yaml
 
 Check that Peer is running
 
