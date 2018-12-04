@@ -8,12 +8,12 @@ persistence:
 ord:
   type: kafka
   ## MSP ID of the Orderer
-  mspID: AidTechMSP
+  mspID: OrdererMSP
 
 secrets:
   ord:
-    cert: hlf--ord1-idcert
-    key: hlf--ord1-idkey
+    cert: hlf--ord2-idcert
+    key: hlf--ord2-idkey
     caCert: hlf--ord-ca-cert
   genesis: hlf--genesis
   adminCert: hlf--ord-admincert

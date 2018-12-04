@@ -8,7 +8,7 @@ persistence:
 peer:
   databaseType: CouchDB
   couchdbInstance: cdb-peer2
-  mspID: AidTechMSP
+  mspID: PeerMSP
 
 secrets:
   peer:

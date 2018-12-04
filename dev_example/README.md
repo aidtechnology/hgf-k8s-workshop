@@ -103,7 +103,7 @@ Save node identity cryptographic material as secrets:
 
 And install the HLF Orderer Helm chart:
 
-    helm install stable/hlf-ord -n ord1 --namespace orderers -f ../helm_values/hlf-ord/ord1.yaml
+    helm install stable/hlf-ord -n ord1 --namespace orderers -f ../helm_values/ord1.yaml
 
 And check that it is running:
 
@@ -117,7 +117,7 @@ And check that it is running:
 
 We start by installing the CouchDB database:
 
-    helm install stable/hlf-couchdb -n cdb-peer1 --namespace peers -f ../helm_values/hlf-couchdb/cdb-peer1.yaml
+    helm install stable/hlf-couchdb -n cdb-peer1 --namespace peers -f ../helm_values/cdb-peer1.yaml
 
 And check that it is running:
 
@@ -141,7 +141,7 @@ Save node identity cryptographic material as secrets:
 
 And install the HLF-Peer Helm Chart:
 
-    helm install stable/hlf-peer -n peer1 --namespace peers -f ../helm_values/hlf-peer/peer1.yaml
+    helm install stable/hlf-peer -n peer1 --namespace peers -f ../helm_values/peer1.yaml
 
 And check that it is running:
 
