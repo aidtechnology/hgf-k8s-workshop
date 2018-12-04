@@ -275,13 +275,13 @@ Register orderer with CA (typically we would use a more secure password than `pe
 
     FABRIC_CA_CLIENT_HOME=./config fabric-ca-client enroll -d -u https://peer${NUM}:peer${NUM}_pw@$CA_INGRESS -M peer${NUM}_MSP
 
-Save the Orderer certificate in a secret
+Save the Peer certificate in a secret
 
     NODE_CERT=$(ls ./config/peer${NUM}_MSP/signcerts/*.pem)
 
     kubectl create secret generic -n peers hlf--peer${NUM}-idcert --from-file=cert.pem=${NODE_CERT}
 
-Save the Orderer private key in another secret
+Save the Peer private key in another secret
 
     NODE_KEY=$(ls ./config/peer${NUM}_MSP/keystore/*_sk)
 
@@ -293,9 +293,11 @@ Install Peer
 
     helm install stable/hlf-peer -n peer${NUM} --namespace peers -f ./helm_values/peer${NUM}.yaml
 
-Check that Peer is running
+Get Peer pod:
 
     PEER_POD=$(kubectl get pods -n peers -l "app=hlf-peer,release=peer${NUM}" -o jsonpath="{.items[0].metadata.name}")
+
+And check that Peer is running
 
     kubectl logs -n peers $PEER_POD | grep 'Starting peer'
 

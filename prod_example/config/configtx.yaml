@@ -89,7 +89,7 @@ Orderer: &OrdererDefaults
         # If using K8S, we specify the service exposing the brokers
         # NOTE: Use Address/IP:port notation
         Brokers:
-            - kafka-hlf.blockchain.svc.cluster.local:9092
+            - kafka-hlf.orderers.svc.cluster.local:9092
 
     # Organizations is the list of orgs which are defined as participants on
     # the orderer side of the network
