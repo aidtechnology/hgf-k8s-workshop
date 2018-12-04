@@ -157,6 +157,12 @@ Create a secret to hold the admin key:
 
     kubectl create secret generic -n orderers hlf--ord-adminkey --from-file=key.pem=$ORG_KEY
 
+Create a secret to hold the admin key CA certificate:
+
+    CA_CERT=$(ls ./config/OrdererMSP/cacerts/*.pem)
+
+    kubectl create secret generic -n orderers hlf--ord-ca-cert --from-file=cacert.pem=$CA_CERT
+
 ###### Peer Organisation
 
 Create a secret to hold the admincert:
@@ -171,27 +177,7 @@ Create a secret to hold the admin key:
 
     kubectl create secret generic -n peers hlf--peer-adminkey --from-file=key.pem=$ORG_KEY
 
-##### CA Certificates
-
-###### Orderer Organisation
-
-And get the certificate from the CA:
-
-    FABRIC_CA_CLIENT_HOME=./config fabric-ca-client getcacert -u https://$CA_INGRESS -M ./OrdererMSP
-
-Create a secret to hold the admin key CA certificate:
-
-    CA_CERT=$(ls ./config/OrdererMSP/cacerts/*.pem)
-
-    kubectl create secret generic -n orderers hlf--ord-ca-cert --from-file=cacert.pem=$CA_CERT
-
-###### Peer Organisation
-
-And get the certificate from the CA:
-
-    FABRIC_CA_CLIENT_HOME=./config fabric-ca-client getcacert -u https://$CA_INGRESS -M ./PeerMSP
-
-Create a secret to hold the admin key: CA certificate:
+Create a secret to hold the CA certificate:
 
     CA_CERT=$(ls ./config/PeerMSP/cacerts/*.pem)
 

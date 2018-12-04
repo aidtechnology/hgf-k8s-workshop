@@ -13,8 +13,7 @@
 ################################################################################
 Organizations:
 
-    # SampleOrg defines an MSP using the sampleconfig.  It should never be used
-    # in production but may be used as a template for other definitions
+    # Organisation controlling Orderers
     - &OrdererOrg
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
@@ -29,7 +28,7 @@ Organizations:
         # turn off security for the channel
         AdminPrincipal: Role.MEMBER
 
-    # Organization controlling both peers and Orderers
+    # Organisation controlling Peers
     - &AidTech
         Name: AidTech
 
