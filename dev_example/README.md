@@ -173,8 +173,12 @@ We start by deleting the actual Helm deployments:
 
 Then we delete the crypto-material we saved for the orderers:
 
-    kubectl -n orderers delete secret hlf--genesis hlf--ord-admincert hlf--ord-cacert hlf--ord1-idcert hlf--ord1-idkey
+    kubectl delete secret -n orderers hlf--genesis hlf--ord-admincert hlf--ord-cacert hlf--ord1-idcert hlf--ord1-idkey
 
 And that of the peers:
 
-    kubectl -n peers delete secret hlf--channel hlf--peer-admincert hlf--peer-adminkey hlf--peer-cacert hlf--peer1-idcert hlf--peer1-idkey
+    kubectl delete secret -n peers hlf--channel hlf--peer-admincert hlf--peer-adminkey hlf--peer-cacert hlf--peer1-idcert hlf--peer1-idkey
+
+Delete crypto material files:
+
+    rm -rf ./config/*MSP ./config/genesis.block ./config/mychannel.tx
