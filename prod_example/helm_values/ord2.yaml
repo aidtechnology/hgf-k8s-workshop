@@ -7,7 +7,6 @@ persistence:
 
 ord:
   type: kafka
-  ## MSP ID of the Orderer
   mspID: OrdererMSP
 
 secrets:
