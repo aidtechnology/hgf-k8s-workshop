@@ -18,7 +18,7 @@ Table of Contents
 
 Before running this tutorial you will need:
 
-1) A Kubernetes (K8S) cluster (you can get free credits to deploy a managed K8S cluster on AWS, GCP, Azure, etc)
+1) A Kubernetes (K8S) cluster with at least 1 node (you can get free credits to deploy a managed K8S cluster on AWS, GCP, Azure, etc)
 2) Helm (and Tiller) installed on K8S
 
 ## Creating
@@ -103,7 +103,7 @@ Save node identity cryptographic material as secrets:
 
 And install the HLF Orderer Helm chart:
 
-    helm install stable/hlf-ord -n ord1 --namespace orderers -f ../values/hlf-ord/ord1.yaml
+    helm install stable/hlf-ord -n ord1 --namespace orderers -f ../helm_values/hlf-ord/ord1.yaml
 
 And check that it is running:
 
@@ -117,7 +117,7 @@ And check that it is running:
 
 We start by installing the CouchDB database:
 
-    helm install stable/hlf-couchdb -n cdb-peer1 --namespace peers -f ../values/hlf-couchdb/cdb-peer1.yaml
+    helm install stable/hlf-couchdb -n cdb-peer1 --namespace peers -f ../helm_values/hlf-couchdb/cdb-peer1.yaml
 
 And check that it is running:
 
@@ -141,7 +141,7 @@ Save node identity cryptographic material as secrets:
 
 And install the HLF-Peer Helm Chart:
 
-    helm install stable/hlf-peer -n peer1 --namespace peers -f ../values/hlf-peer/peer1.yaml
+    helm install stable/hlf-peer -n peer1 --namespace peers -f ../helm_values/hlf-peer/peer1.yaml
 
 And check that it is running:
 

@@ -10,7 +10,7 @@ Table of Contents
             * [Domain Name](#domain-name)
       * [Creating](#creating)
          * [Fabric CA](#fabric-ca)
-         * [Crypto material](#crypto-material)
+         * [Genesis and Channel](#genesis-and-channel)
          * [Kafka for Ordering service](#kafka-for-ordering-service)
          * [Fabric Orderer](#fabric-orderer)
          * [Fabric Peer](#fabric-peer)
@@ -24,7 +24,7 @@ Table of Contents
 
 Before running this tutorial you will need:
 
-1) A Kubernetes (K8S) cluster (you can get free credits to deploy a managed K8S cluster on AWS, GCP, Azure, etc)
+1) A Kubernetes (K8S) cluster with at least 4 nodes (you can get free credits to deploy a managed K8S cluster on AWS, GCP, Azure, etc)
 2) Helm (and Tiller) installed on K8S
 3) An `nginx-ingress` installation (using the Helm chart)
 4) A `cert-manager` installation (using the Helm chart)
@@ -52,7 +52,7 @@ Then we need to add the Staging and Production cluster issuers
 
 #### Domain Name
 
-Currently, the `helm_values` files for the CA reference the following CA Domain Name: `ca.lf.aidtech-test.xyz` in  `/helm_values/ca_values.yaml`
+Currently, the `helm_values` files for the CA reference the following CA Domain Name: `ca.hgf.aidtech-test.xyz` in  `/helm_values/ca_values.yaml`
 
 Since you won't have access to this, you should set this domain name to one you've obtained/purchased, and which is pointing to the `nginx-ingress` IP address.
 
@@ -76,6 +76,8 @@ Check if server is ready
 
     kubectl logs -n cas $CA_POD | grep "Listening on"
 
+#### Fabric CA Identity
+
 Check that we don't have a certificate
 
     kubectl exec -n cas $CA_POD -- cat /var/hyperledger/fabric-ca/msp/signcerts/cert.pem
@@ -88,9 +90,11 @@ Check that ingress works correctly
 
     curl https://$CA_INGRESS/cainfo
 
-#### Identities
+#### Org Admin Identities
 
-##### Orderer admin
+##### Register
+
+###### Orderer Organisation
 
 Get identity of ord-admin (this should not exist at first)
 
@@ -100,19 +104,46 @@ Register Orderer Admin if the previous command did not work
 
     kubectl exec -n cas $CA_POD -- fabric-ca-client register --id.name ord-admin --id.secret OrdAdm1nPW --id.attrs 'admin=true:ecert'
 
+###### Peer Organisation
+
+Get identity of ord-admin (this should not exist at first)
+
+    kubectl exec -n cas $CA_POD -- fabric-ca-client identity list --id peer-admin
+
+Register Peer Admin if the previous command did not work
+
+    kubectl exec -n cas $CA_POD -- fabric-ca-client register --id.name peer-admin --id.secret PeerAdm1nPW --id.attrs 'admin=true:ecert'
+
+##### Enroll
+
+###### Orderer Organisation
+
 Enroll the Organisation Admin identity (typically we would use a more secure password than `OrdAdm1nPW`, etc.)
 
     FABRIC_CA_CLIENT_HOME=./config fabric-ca-client enroll -u https://ord-admin:OrdAdm1nPW@$CA_INGRESS -M ./OrdererMSP
-
-And get the certificate from the CA:
-
-    FABRIC_CA_CLIENT_HOME=./config fabric-ca-client getcacert -u https://$CA_INGRESS -M ./OrdererMSP
 
 Copy the signcerts to admincerts
 
     mkdir -p ./config/OrdererMSP/admincerts
 
     cp ./config/OrdererMSP/signcerts/* ./config/OrdererMSP/admincerts
+
+
+###### Peer Organisation
+
+Enroll the Organisation Admin identity (typically we would use a more secure password than `PeerAdm1nPW`, etc.)
+
+    FABRIC_CA_CLIENT_HOME=./config fabric-ca-client enroll -u https://peer-admin:PeerAdm1nPW@$CA_INGRESS -M ./PeerMSP
+
+Copy the signcerts to admincerts
+
+    mkdir -p ./config/PeerMSP/admincerts
+
+    cp ./config/PeerMSP/signcerts/* ./config/PeerMSP/admincerts
+
+##### Save Crypto Material
+
+###### Orderer Organisation
 
 Create a secret to hold the admin certificate:
 
@@ -126,35 +157,7 @@ Create a secret to hold the admin key:
 
     kubectl create secret generic -n orderers hlf--ord-adminkey --from-file=key.pem=$ORG_KEY
 
-Create a secret to hold the admin key CA certificate:
-
-    CA_CERT=$(ls ./config/OrdererMSP/cacerts/*.pem)
-
-    kubectl create secret generic -n orderers hlf--ord-ca-cert --from-file=cacert.pem=$CA_CERT
-
-##### Peer admin
-
-Get identity of ord-admin (this should not exist at first)
-
-    kubectl exec -n cas $CA_POD -- fabric-ca-client identity list --id peer-admin
-
-Register Peer Admin if the previous command did not work
-
-    kubectl exec -n cas $CA_POD -- fabric-ca-client register --id.name peer-admin --id.secret PeerAdm1nPW --id.attrs 'admin=true:ecert'
-
-Enroll the Organisation Admin identity (typically we would use a more secure password than `PeerAdm1nPW`, etc.)
-
-    FABRIC_CA_CLIENT_HOME=./config fabric-ca-client enroll -u https://peer-admin:PeerAdm1nPW@$CA_INGRESS -M ./PeerMSP
-
-And get the certificate from the CA:
-
-    FABRIC_CA_CLIENT_HOME=./config fabric-ca-client getcacert -u https://$CA_INGRESS -M ./PeerMSP
-
-Copy the signcerts to admincerts
-
-    mkdir -p ./config/PeerMSP/admincerts
-
-    cp ./config/PeerMSP/signcerts/* ./config/PeerMSP/admincerts
+###### Peer Organisation
 
 Create a secret to hold the admincert:
 
@@ -168,13 +171,33 @@ Create a secret to hold the admin key:
 
     kubectl create secret generic -n peers hlf--peer-adminkey --from-file=key.pem=$ORG_KEY
 
+##### CA Certificates
+
+###### Orderer Organisation
+
+And get the certificate from the CA:
+
+    FABRIC_CA_CLIENT_HOME=./config fabric-ca-client getcacert -u https://$CA_INGRESS -M ./OrdererMSP
+
+Create a secret to hold the admin key CA certificate:
+
+    CA_CERT=$(ls ./config/OrdererMSP/cacerts/*.pem)
+
+    kubectl create secret generic -n orderers hlf--ord-ca-cert --from-file=cacert.pem=$CA_CERT
+
+###### Peer Organisation
+
+And get the certificate from the CA:
+
+    FABRIC_CA_CLIENT_HOME=./config fabric-ca-client getcacert -u https://$CA_INGRESS -M ./PeerMSP
+
 Create a secret to hold the admin key: CA certificate:
 
     CA_CERT=$(ls ./config/PeerMSP/cacerts/*.pem)
 
     kubectl create secret generic -n peers hlf--peer-ca-cert --from-file=cacert.pem=$CA_CERT
 
-### Crypto material
+### Genesis and channel
 
     cd ./config
 
@@ -189,6 +212,8 @@ Save them as secrets
     kubectl create secret generic -n orderers hlf--genesis --from-file=genesis.block
 
     kubectl create secret generic -n peers hlf--channel --from-file=mychannel.tx
+
+Get back to where we were before...
 
     cd ..
 
@@ -208,7 +233,7 @@ For each orderer set the `NUM` environmental variable and follow the below instr
 
 Register orderer with CA (typically we would use a more secure password than `ord1_pw`, etc.)
 
-    kubectl exec -n orderers $CA_POD -- fabric-ca-client register --id.name ord${NUM} --id.secret ord${NUM}_pw --id.type orderer
+    kubectl exec -n cas $CA_POD -- fabric-ca-client register --id.name ord${NUM} --id.secret ord${NUM}_pw --id.type orderer
 
     FABRIC_CA_CLIENT_HOME=./config fabric-ca-client enroll -d -u https://ord${NUM}:ord${NUM}_pw@$CA_INGRESS -M ord${NUM}_MSP
 
@@ -244,6 +269,18 @@ For each peer set the `NUM` environmental variable and follow the below instruct
 
     export NUM=1
 
+#### CouchDB Helm Chart
+
+Install CouchDB chart
+
+    helm install stable/hlf-couchdb -n cdb-peer${NUM} --namespace peers -f ./helm_values/cdb-peer${NUM}_values.yaml
+
+Check that CouchDB is running
+
+    CDB_POD=$(kubectl get pods -n peers -l "app=hlf-couchdb,release=cdb-peer${NUM}" -o jsonpath="{.items[*].metadata.name}")
+
+    kubectl logs -n peers $CDB_POD | grep 'Apache CouchDB has started on'
+
 #### Crypto material
 
 Register orderer with CA (typically we would use a more secure password than `peer1_pw`, etc.)
@@ -264,17 +301,7 @@ Save the Orderer private key in another secret
 
     kubectl create secret generic -n peers hlf--peer${NUM}-idkey --from-file=key.pem=${NODE_KEY}
 
-#### Helm Charts
-
-Install CouchDB chart
-
-    helm install stable/hlf-couchdb -n cdb-peer${NUM} --namespace peers -f ./helm_values/cdb-peer${NUM}_values.yaml
-
-Check that CouchDB is running
-
-    CDB_POD=$(kubectl get pods -n peers -l "app=hlf-couchdb,release=cdb-peer${NUM}" -o jsonpath="{.items[*].metadata.name}")
-
-    kubectl logs -n peers $CDB_POD | grep 'Apache CouchDB has started on'
+#### Peer Helm Chart
 
 Install Peer
 
@@ -310,7 +337,7 @@ Check which channels the peer has joined:
 
 Delete helm deployments
 
-    helm delete --purge ca-pg ca kafka-hlf ord1 ord2 cdb-peer1 peer1 cdb-peer2 peer2
+    helm delete --purge ca kafka-hlf ord1 ord2 cdb-peer1 peer1 cdb-peer2 peer2
 
 Delete stateful sets (in case Helm does not fully delete them)
 
@@ -318,15 +345,15 @@ Delete stateful sets (in case Helm does not fully delete them)
 
 Delete Persistent Volume Claims
 
-    kubectl delete pvc -n cas ca-pg-postgresql
+    kubectl delete pvc -n cas data-ca-postgresql-0
 
     kubectl delete pvc -n orderers data-kafka-hlf-zookeeper-0 data-kafka-hlf-zookeeper-1 data-kafka-hlf-zookeeper-2 datadir-kafka-hlf-0 datadir-kafka-hlf-1 datadir-kafka-hlf-2 datadir-kafka-hlf-3
 
 Delete secrets on K8S
 
-    kubectl delete secret -n orderers hlf--ord-admincert hlf--ord-adminkey hlf--genesis hlf--ord1-idcert hlf--ord2-idcert hlf--ord1-idkey hlf--ord2-idkey
+    kubectl delete secret -n orderers hlf--ord-admincert hlf--ord-adminkey hlf--ord-ca-cert hlf--genesis hlf--ord1-idcert hlf--ord2-idcert hlf--ord1-idkey hlf--ord2-idkey
 
-    kubectl delete secret -n peers hlf--peer-admincert  hlf--peer-adminkey hlf--channel hlf--peer1-idcert hlf--peer2-idcert hlf--peer1-idkey hlf--peer2-idkey
+    kubectl delete secret -n peers hlf--peer-admincert  hlf--peer-adminkey hlf--peer-ca-cert hlf--channel hlf--peer1-idcert hlf--peer2-idcert hlf--peer1-idkey hlf--peer2-idkey
 
 Delete crypto material
 
