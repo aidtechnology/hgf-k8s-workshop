@@ -115,7 +115,7 @@ We start by installing the CouchDB database:
 
 And check that it is running:
 
-    CDB_POD=$(kubectl get pods -n peers -l "app=hlf-couchdb,release=cdb-peer${NUM}" -o jsonpath="{.items[*].metadata.name}")
+    CDB_POD=$(kubectl get pods -n peers -l "app=hlf-couchdb,release=cdb-peer1" -o jsonpath="{.items[*].metadata.name}")
 
     kubectl logs -n peers $CDB_POD | grep 'Apache CouchDB has started on'
 
