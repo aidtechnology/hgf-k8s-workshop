@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+
+*MSP
+mychannel.tx
+genesis.block
+crypto-config
