@@ -13,7 +13,8 @@
 ################################################################################
 Organizations:
 
-    # Organisation controlling Orderers
+    # SampleOrg defines an MSP using the sampleconfig.  It should never be used
+    # in production but may be used as a template for other definitions
     - &OrdererOrg
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
@@ -23,19 +24,19 @@ Organizations:
         ID: OrdererMSP
 
         # MSPDir is the filesystem path which contains the MSP configuration
-        MSPDir: ./crypto-config/ordererOrganizations/orderers.svc.cluster.local/msp
+        MSPDir: ./OrdererMSP
 
         # turn off security for the channel
         AdminPrincipal: Role.MEMBER
 
-    # Organisation controlling Peers
+    # Organization controlling both peers and Orderers
     - &AidTech
         Name: AidTech
 
         # ID to load the MSP definition as
         ID: PeerMSP
 
-        MSPDir: ./crypto-config/peerOrganizations/peers.svc.cluster.local/msp
+        MSPDir: ./PeerMSP
 
         # turn off security for the peer
         AdminPrincipal: Role.MEMBER
@@ -44,7 +45,7 @@ Organizations:
             # AnchorPeers defines the location of peers that can be used
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
-            - Host: peer0-hlf-peer.peers.svc.cluster.local
+            - Host: peer1-hlf-peer.peers.svc.cluster.local
               Port: 7051
 
 ################################################################################
@@ -59,10 +60,11 @@ Orderer: &OrdererDefaults
 
     # Orderer Type: The orderer implementation to start
     # Available types are "solo" and "kafka"
-    OrdererType: solo
+    OrdererType: kafka
 
     Addresses:
-        - ord0-hlf-ord.orderers.svc.cluster.local:7050
+        - ord1-hlf-ord.orderers.svc.cluster.local:7050
+        - ord2-hlf-ord.orderers.svc.cluster.local:7050
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s

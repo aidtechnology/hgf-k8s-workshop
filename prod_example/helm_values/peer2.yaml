@@ -1,0 +1,31 @@
+image:
+  tag: 1.3.0
+
+persistence:
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+peer:
+  databaseType: CouchDB
+  couchdbInstance: cdb-peer2
+  mspID: PeerMSP
+
+secrets:
+  peer:
+    cert: hlf--peer2-idcert
+    key: hlf--peer2-idkey
+    caCert: hlf--peer-ca-cert
+  channel: hlf--channel
+  adminCert: hlf--peer-admincert
+  adminKey: hlf--peer-adminkey
+  caServerTls: ca--tls
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 95
+        podAffinityTerm:
+          topologyKey: "kubernetes.io/hostname"
+          labelSelector:
+            matchLabels:
+              app: hlf-peer

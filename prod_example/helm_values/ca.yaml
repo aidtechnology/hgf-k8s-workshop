@@ -1,0 +1,55 @@
+image:
+  tag: 1.3.0
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-production"
+  path: /
+  hosts:
+    # TODO: Change this to your Domain Name
+    - ca.hgf.aidtech-test.xyz
+  tls:
+    - secretName: ca--tls
+      hosts:
+        # TODO: Change this to your Domain Name
+        - ca.hgf.aidtech-test.xyz
+
+persistence:
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+caName: ca
+
+postgresql:
+  enabled: true
+
+config:
+  hlfToolsVersion: 1.3.0
+  csr:
+    names:
+      c: IE
+      st: Dublin
+      l:
+      o: "AID:Tech"
+      ou: Blockchain
+  affiliations:
+    aidtech: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 95
+        podAffinityTerm:
+          topologyKey: "kubernetes.io/hostname"
+          labelSelector:
+            matchLabels:
+              app: hlf-ca
+  podAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchLabels:
+          app: postgresql
+          release: ca
+      topologyKey: "kubernetes.io/hostname"
