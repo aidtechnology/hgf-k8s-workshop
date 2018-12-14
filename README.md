@@ -3,8 +3,10 @@ Table of Contents
 
    * [HGF K8S Workshop](#hgf-k8s-workshop)
       * [Workshop flow](#workshop-flow)
+         * [Cluster creation](#cluster-creation)
          * [Development example](#development-example)
          * [Production example](#production-example)
+         * [Cleanup](#cleanup)
       * [Extra resources](#extra-resources)
          * [Repositories](#repositories)
          * [Courses](#courses)
@@ -17,6 +19,22 @@ Hyperledger Global Forum workshop on deploying Hyperledger Fabric on Kubernetes 
 
 ## Workshop flow
 
+### Cluster creation
+
+In the workshop we demonstrate how to create a managed K8S cluster on Azure:
+
+    export GROUP=hgf-workshop
+    export LOCATION=westeurope
+
+    az group create -n $GROUP -l $LOCATION
+    az aks create -g $GROUP -n ${GROUP}-aks -s Standard_DS2_v2 --kubernetes-version 1.11.5 --node-count 5
+    az aks get-credentials -g ${GROUP} -n ${GROUP}-aks
+
+Then you can install Helm, using
+
+    kubectl create -f ./helm-rbac.yaml
+    helm init --service-account tiller
+
 ### Development example
 
 We will start with the `dev_example`, using Cryptogen to set up the identities and cryptographic material.
@@ -28,6 +46,12 @@ This is sufficient for Development purposes and will use a very simple setup of 
 In the second part of the workshop, `prod_example`, we will be using the Fabric CA to provide the identities and cryptographic material.
 
 This uses as production-ready setup implementing Certificate Authorities persisting identities to PostgreSQL, multiple peers and multiple (Kafka-consensus) orderers.
+
+### Cleanup
+
+If you use Azure AKS, you can just delete the resource group and associated AKS cluster in one fell swoop.
+
+    az group delete -n $GROUP
 
 ## Extra resources
 
