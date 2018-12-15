@@ -28,7 +28,7 @@ In the workshop we demonstrate how to create a managed K8S cluster on Azure:
 
     az group create -n $GROUP -l $LOCATION
     az aks create -g $GROUP -n ${GROUP}-aks -s Standard_DS2_v2 --kubernetes-version 1.11.5 --node-count 5
-    az aks get-credentials -g ${GROUP} -n ${GROUP}-aks
+    az aks get-credentials -g $GROUP -n ${GROUP}-aks
 
 Then you can install Helm, using
 
