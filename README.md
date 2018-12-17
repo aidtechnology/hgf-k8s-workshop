@@ -33,7 +33,14 @@ In the workshop we demonstrate how to create a managed K8S cluster on Azure:
 Then you can install Helm, using
 
     kubectl create -f ./helm-rbac.yaml
+
     helm init --service-account tiller
+
+Finally, add the `incubator` repository, so you are able to install Kafka, etc.
+
+    helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
+
+    helm repo update
 
 ### Development example
 
