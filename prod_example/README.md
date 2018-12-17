@@ -3,6 +3,7 @@ Table of Contents
 
    * [Production deployment](#production-deployment)
       * [Before starting](#before-starting)
+         * [Important note](#important-note)
          * [Pre-requisites](#pre-requisites)
          * [Customisation](#customisation)
       * [Creating](#creating)
@@ -16,6 +17,16 @@ Table of Contents
 # Production deployment
 
 ## Before starting
+
+### Important note
+
+While we call this a `production` deployment, this is not *quite* a production deployment because in production:
+
+1. you will have more peers
+2. you will have more orderers
+3. you will have multiple organisations
+
+However, this is a good starting point for a production deployment.
 
 ### Pre-requisites
 
