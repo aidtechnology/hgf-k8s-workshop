@@ -3,6 +3,7 @@ Table of Contents
 
    * [Production deployment](#production-deployment)
       * [Before starting](#before-starting)
+         * [Important note](#important-note)
          * [Pre-requisites](#pre-requisites)
          * [Customisation](#customisation)
       * [Creating](#creating)
@@ -16,6 +17,16 @@ Table of Contents
 # Production deployment
 
 ## Before starting
+
+### Important note
+
+While we call this a `production` deployment, this is not *quite* a production deployment because in production:
+
+1. you will have more peers
+2. you will have more orderers
+3. you will have multiple organisations
+
+However, this is a good starting point for a production deployment.
 
 ### Pre-requisites
 
@@ -56,6 +67,12 @@ Since you won't have access to this, you should set this domain name to one you'
 Alternatively, you may not use the Ingress at all and disable it, and instead use the CA through port-forwarding from the Kubernetes cluster to your local machine. For this you will need to adapt the instructions provided to your own use-case.
 
 ## Creating
+
+### K8S namespaces
+
+Create the required namespaces:
+
+    kubectl create ns cas orderers peers
 
 ### Fabric CA
 
@@ -343,3 +360,7 @@ Delete secrets on K8S:
 Delete crypto material files:
 
     rm -rf ./config/*MSP ./config/genesis.block ./config/mychannel.tx
+
+Clean up namespaces we used for the production examples
+
+    kubectl delete ns cas orderers peers

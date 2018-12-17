@@ -44,7 +44,7 @@ Organizations:
             # AnchorPeers defines the location of peers that can be used
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
-            - Host: peer0-hlf-peer.peers.svc.cluster.local
+            - Host: peer1-hlf-peer.peers.svc.cluster.local
               Port: 7051
 
 ################################################################################
@@ -62,7 +62,7 @@ Orderer: &OrdererDefaults
     OrdererType: solo
 
     Addresses:
-        - ord0-hlf-ord.orderers.svc.cluster.local:7050
+        - ord1-hlf-ord.orderers.svc.cluster.local:7050
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s
