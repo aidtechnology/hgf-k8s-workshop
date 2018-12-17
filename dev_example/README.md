@@ -182,3 +182,7 @@ And that of the peers:
 Delete crypto material files:
 
     rm -rf ./config/*MSP ./config/genesis.block ./config/mychannel.tx
+
+Clean up namespaces we used for the development examples
+
+    kubectl delete ns orderers peers
