@@ -17,6 +17,8 @@ Table of Contents
 
 Hyperledger Global Forum workshop on deploying Hyperledger Fabric on Kubernetes in development and production.
 
+You may wish to explore https://github.com/aidtechnology/nephos, which helps automate the deployment of similar examples as presented here.
+
 ## Workshop flow
 
 ### Cluster creation
