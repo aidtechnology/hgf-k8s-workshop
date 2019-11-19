@@ -151,9 +151,12 @@ And check that it is running:
 
 #### Channel
 
+Copy mychannel.tx inside the pod
+    kubectl cp mychannel.tx -n peers $PEER_POD:/tmp/
+
 Create the channel
 
-    kubectl exec -n peers $PEER_POD -- peer channel create -o ord1-hlf-ord.orderers.svc.cluster.local:7050 -c mychannel -f /hl_config/channel/mychannel.tx
+    kubectl exec -n peers $PEER_POD -- peer channel create -o ord1-hlf-ord.orderers.svc.cluster.local:7050 -c mychannel -f /tmp/mychannel.tx
 
 Fetch the channel and join it from the orderer:
 
